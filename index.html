@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="kk" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>«Байсан» Кафесі | Электронды мәзір</title>
+    
+    <!-- Иконка во вкладке браузера -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23261b10' stroke='%23d4af37' stroke-width='4'/><path d='M30 45 Q 50 30 70 45 L 80 70 L 20 70 Z' fill='%23a37c51'/><circle cx='50' cy='35' r='10' fill='%23d4af37'/><path d='M38 60 Q 50 75 62 60' stroke='%23f3e5ab' stroke-width='3' fill='none'/></svg>">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        baisan: { 50: '#fcfbfa', 100: '#f4f0eb', 200: '#e5dbcd', 300: '#cfbc9e', 600: '#a37c51', 700: '#86633f', 800: '#5c4329', 900: '#3d2b1a', 950: '#261b10' },
+                        gold: { light: '#f3e5ab', DEFAULT: '#d4af37', dark: '#aa820a' }
+                    },
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .selectable-text { user-select: text; -webkit-user-select: text; }
+        
+        @keyframes pulseLogo {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.8)); }
+        }
+        .animate-logo-pulse { animation: pulseLogo 2.5s infinite ease-in-out; }
+
+        @keyframes fadeOutSplash {
+            to { opacity: 0; visibility: hidden; }
+        }
+        .splash-fade { animation: fadeOutSplash 0.8s ease-out 2s forwards; }
+
+        @keyframes printReceipt {
+            0% { transform: translateY(-20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .animate-receipt { animation: printReceipt 0.5s ease-out forwards; }
+
+        .cafe-bg {
+            background: linear-gradient(to bottom, rgba(38, 27, 16, 0.85), rgba(38, 27, 16, 0.92)), url('cafe_bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body class="cafe-bg text-baisan-900 font-sans antialiased pb-32 selectable-text min-h-screen">
+
+    <!-- АНИМИРОВАННЫЙ ЭКРАН ЗАГРУЗКИ (SPLASH SCREEN) -->
+    <div id="splash-screen" class="fixed inset-0 z-[100] bg-baisan-950 flex flex-col items-center justify-center text-white splash-fade">
+        <div class="relative flex flex-col items-center px-4 text-center">
+            <div class="w-32 h-32 sm:w-36 sm:h-36 rounded-full border-4 border-gold shadow-2xl overflow-hidden mb-6 animate-logo-pulse bg-gradient-to-tr from-amber-100 via-amber-50 to-white p-2 flex flex-col items-center justify-center relative">
+                <div class="absolute top-3 w-12 h-6 bg-amber-400 rounded-full opacity-80"></div>
+                <div class="absolute text-[10px] tracking-tighter font-serif text-baisan-800 font-bold top-10">/\/\/\</div>
+                <i class="fa-solid fa-mug-hot text-3xl text-amber-900 z-10 mt-2"></i>
+                <span class="font-serif font-bold text-xs tracking-wider uppercase mt-1 text-baisan-950" data-lang="title_cafe">Кафе</span>
+            </div>
+            <h2 class="font-serif text-2xl sm:text-3xl font-bold text-gold-light tracking-wide mb-1" data-lang="brand_title">«Байсан» Кафесі</h2>
+            <p class="text-xs uppercase tracking-[0.3em] text-gold/80 font-bold" data-lang="slogan">Дәмді ас • Жақсы көңіл-күй</p>
+            <div class="mt-8 flex items-center gap-2 text-xs text-baisan-300">
+                <span class="w-4 h-4 rounded-full border-2 border-gold border-t-transparent animate-spin"></span>
+                <span data-lang="loading">Мәзір жүктелуде...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header с логотипом -->
+    <header class="relative bg-baisan-950/90 backdrop-blur-md text-white overflow-hidden shadow-2xl border-b-2 border-gold/40">
+        
+        <!-- КНОПКА ПЕРЕКЛЮЧЕНИЯ ЯЗЫКА В ШАПКЕ -->
+        <div class="absolute top-3 right-3 z-10">
+            <button onclick="toggleLanguage()" class="bg-gold/20 hover:bg-gold/30 text-gold-light border border-gold/40 px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-md">
+                <i class="fa-solid fa-globe text-gold"></i>
+                <span id="lang-btn-text">РУС</span>
+            </button>
+        </div>
+
+        <div class="relative max-w-2xl mx-auto px-4 py-6 text-center flex flex-col items-center">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-gold shadow-xl overflow-hidden mb-3 bg-gradient-to-tr from-amber-100 via-amber-50 to-white p-1.5 flex flex-col items-center justify-center relative">
+                <div class="absolute top-2 w-8 h-4 bg-amber-400 rounded-full opacity-80"></div>
+                <div class="absolute text-[8px] tracking-tighter font-serif text-baisan-800 font-bold top-7">/\/\/\</div>
+                <i class="fa-solid fa-mug-hot text-xl sm:text-2xl text-amber-900 z-10 mt-1"></i>
+                <span class="font-serif font-bold text-[9px] tracking-wider uppercase text-baisan-950" data-lang="title_cafe">Кафе</span>
+            </div>
+            <h1 class="font-serif text-2xl sm:text-4xl font-bold text-gold-light mb-1" data-lang="brand_title">«Байсан» Кафесі</h1>
+            <p class="text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-gold/90 mb-3 font-bold" data-lang="slogan">Дәмді ас • Жақсы көңіл-күй</p>
+            <div class="inline-flex items-center gap-2 sm:gap-3 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-medium border border-white/10 text-baisan-200">
+                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span><span data-lang="table_label">Үстел</span>: <strong class="text-white" id="current-table-label">№ 4</strong></span>
+                <span class="text-gold">•</span>
+                <span><span data-lang="service_label">Қызмет</span>: <strong class="text-white">10%</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Поиск и категории -->
+    <div class="sticky top-0 z-40 bg-baisan-950/90 backdrop-blur-md border-b border-gold/20 shadow-lg px-4 py-3">
+        <div class="max-w-2xl mx-auto flex gap-2 sm:gap-3">
+            <div class="relative flex-1">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-baisan-300"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <input type="text" id="search-input" data-lang-placeholder="search_ph" placeholder="Мәзірден іздеу..." 
+                    class="w-full pl-10 pr-4 py-2.5 bg-baisan-900/90 text-white placeholder-baisan-400 border border-gold/30 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-gold shadow-inner">
+            </div>
+            <button onclick="openTableSelector()" class="bg-gold/20 hover:bg-gold/30 text-gold-light border border-gold/40 px-3 py-2.5 rounded-2xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-chair text-gold"></i> <span data-lang="table_btn">Үстел</span>
+            </button>
+        </div>
+        <div class="max-w-2xl mx-auto mt-3 overflow-x-auto hide-scrollbar flex gap-2 pb-1" id="category-tabs"></div>
+    </div>
+
+    <!-- Основной контент меню -->
+    <main class="max-w-2xl mx-auto px-4 py-6" id="menu-container"></main>
+
+    <!-- Плавающая панель заказа -->
+    <div id="floating-cart" class="fixed bottom-0 left-0 right-0 z-50 p-3 sm:p-4 bg-gradient-to-t from-baisan-950 via-baisan-950/95 to-transparent backdrop-blur-lg transform translate-y-full transition-transform duration-300">
+        <div class="max-w-2xl mx-auto bg-baisan-900 border border-gold/40 rounded-3xl p-3.5 sm:p-4 shadow-2xl flex items-center justify-between text-white">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gold flex items-center justify-center text-baisan-950 font-bold text-base sm:text-lg shadow-lg" id="cart-badge-count">0</div>
+                <div>
+                    <p class="text-[11px] sm:text-xs text-baisan-300 font-medium" data-lang="your_order">Сіздің тапсырысыңыз</p>
+                    <p class="font-serif text-base sm:text-lg font-bold text-gold-light" id="cart-total-price">0 ₸</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="callWaiter()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2.5 rounded-xl text-xs font-semibold transition border border-white/10 flex items-center gap-1">
+                    <i class="fa-solid fa-bell text-gold"></i> <span data-lang="waiter_btn">Даяшы</span>
+                </button>
+                <button onclick="openCartModal()" class="bg-gradient-to-r from-amber-600 to-gold text-baisan-950 px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md active:scale-95 transition flex items-center gap-1.5">
+                    <span data-lang="order_btn">Тапсырыс</span> <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Корзина -->
+    <div id="cart-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-baisan-900 text-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col border border-gold/30">
+            <div class="p-4 sm:p-5 bg-baisan-950 flex items-center justify-between border-b border-gold/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gold/20 flex items-center justify-center text-gold font-bold"><i class="fa-solid fa-receipt"></i></div>
+                    <div>
+                        <h3 class="font-serif font-bold text-base sm:text-lg text-gold-light" data-lang="cart_title">Тапсырыс себеті</h3>
+                        <p class="text-xs text-baisan-300"><span data-lang="brand_title">«Байсан» Кафесі</span> • <span data-lang="table_label">Үстел</span> <span id="modal-table-num">4</span></p>
+                    </div>
+                </div>
+                <button onclick="closeCartModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-3" id="cart-items-list"></div>
+            <div class="p-4 sm:p-5 bg-baisan-950 border-t border-gold/20 space-y-3">
+                <div class="space-y-1.5 text-xs sm:text-sm">
+                    <div class="flex justify-between text-baisan-300"><span data-lang="subtotal_label">Тағамдар сомасы:</span><span id="cart-subtotal" class="font-semibold text-white">0 ₸</span></div>
+                    <div class="flex justify-between text-baisan-300"><span data-lang="service_fee_label">Қызмет көрсету (10%):</span><span id="cart-service" class="font-semibold text-white">0 ₸</span></div>
+                    <div class="flex justify-between text-base sm:text-lg font-bold font-serif text-white pt-2 border-t border-gold/20">
+                        <span data-lang="total_label">Төлеуге барлығы:</span><span id="cart-final-total" class="text-gold-light">0 ₸</span>
+                    </div>
+                </div>
+                <button onclick="printThermalReceipt()" class="w-full bg-gradient-to-r from-amber-600 to-gold text-baisan-950 py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-print"></i> <span data-lang="send_kitchen_btn">Асханаға жіберу & Чек шығару</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Выбор стола -->
+    <div id="table-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-baisan-900 text-white w-full max-w-sm rounded-3xl p-6 text-center shadow-2xl relative border border-gold/30">
+            <h3 class="font-serif text-xl font-bold text-gold-light mb-2" data-lang="select_table_title">Үстеліңізді таңдаңыз</h3>
+            <p class="text-xs text-baisan-300 mb-4" data-lang="select_table_desc">Тапсырыс жеткізілетін орынды көрсетіңіз</p>
+            <div class="grid grid-cols-3 gap-3 mb-6" id="table-grid"></div>
+            <button onclick="closeTableSelector()" class="w-full bg-gold text-baisan-950 py-3 rounded-xl font-bold text-sm" data-lang="done_btn">Дайын</button>
+        </div>
+    </div>
+
+    <!-- Чек -->
+    <div id="receipt-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-amber-50 w-full max-w-sm rounded-2xl p-6 text-baisan-950 shadow-2xl relative animate-receipt border border-amber-200 font-mono">
+            <div class="text-center pb-4 border-b border-dashed border-amber-400">
+                <h3 class="font-bold text-lg font-serif" data-lang="brand_title_upper">«БАЙСАН» КАФЕСІ</h3>
+                <p class="text-[11px] text-baisan-600"><span data-lang="city_name">Астана қ.</span> • <span data-lang="table_label">Үстел</span> <span id="rcpt-tbl">4</span></p>
+                <p class="text-[10px] text-baisan-500 mt-1" id="receipt-date"></p>
+            </div>
+            <div class="py-4 space-y-2 text-xs max-h-52 overflow-y-auto" id="receipt-items-print"></div>
+            <div class="pt-3 border-t border-dashed border-amber-400 space-y-1 text-xs">
+                <div class="flex justify-between"><span data-lang="receipt_subtotal">Сомасы:</span><span id="r-sub">0 ₸</span></div>
+                <div class="flex justify-between"><span data-lang="receipt_service">Қызмет 10%:</span><span id="r-serv">0 ₸</span></div>
+                <div class="flex justify-between font-bold text-sm pt-1 border-t border-amber-300"><span data-lang="receipt_total">БАРЛЫҒЫ:</span><span id="r-tot">0 ₸</span></div>
+            </div>
+            <div class="text-center mt-6 pt-3 border-t border-dashed border-amber-400 text-[10px] text-baisan-600">
+                <p class="font-bold" data-lang="slogan">ДӘМДІ АС • ЖАҚСЫ КӨҢІЛ-КҮЙ</p>
+                <p class="mt-1 text-emerald-700">✓ <span data-lang="sent_success">Тапсырыс асханаға жіберілді</span></p>
+            </div>
+            <button onclick="closeReceiptModal()" class="w-full mt-4 bg-baisan-900 text-white py-2.5 rounded-xl font-sans font-bold text-xs shadow-md" data-lang="close_btn">Жабу</button>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-baisan-950 text-white px-5 py-3 rounded-2xl shadow-2xl border border-gold/30 flex items-center gap-3 text-xs sm:text-sm opacity-0 pointer-events-none transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-gold text-lg"></i><span id="toast-text"></span>
+    </div>
+
+    <script>
+        let currentLang = 'kk'; // 'kk' немесе 'ru'
+
+        const translations = {
+            kk: {
+                title_cafe: "Кафе",
+                brand_title: "«Байсан» Кафесі",
+                brand_title_upper: "«БАЙСАН» КАФЕСІ",
+                slogan: "Дәмді ас • Жақсы көңіл-күй",
+                loading: "Мәзір жүктелуде...",
+                table_label: "Үстел",
+                service_label: "Қызмет",
+                search_ph: "Мәзірден іздеу (палау, стейк...)",
+                table_btn: "Үстел",
+                your_order: "Сіздің тапсырысыңыз",
+                waiter_btn: "Даяшы",
+                order_btn: "Тапсырыс",
+                cart_title: "Тапсырыс себеті",
+                subtotal_label: "Тағамдар сомасы:",
+                service_fee_label: "Қызмет көрсету (10%):",
+                total_label: "Төлеуге барлығы:",
+                send_kitchen_btn: "Асханаға жіберу & Чек шығару",
+                select_table_title: "Үстеліңізді таңдаңыз",
+                select_table_desc: "Тапсырыс жеткізілетін орынды көрсетіңіз",
+                done_btn: "Дайын",
+                city_name: "Астана қ.",
+                receipt_subtotal: "Сомасы:",
+                receipt_service: "Қызмет 10%:",
+                receipt_total: "БАРЛЫҒЫ:",
+                sent_success: "Тапсырыс асханаға жіберілді",
+                close_btn: "Жабу",
+                cart_empty: "Себет бос",
+                added_toast: "Қосылды:",
+                waiter_toast: "🛎 Үстел №{table} үшін даяшы шақырылды!"
+            },
+            ru: {
+                title_cafe: "Кафе",
+                brand_title: "Кафе «Байсан»",
+                brand_title_upper: "КАФЕ «БАЙСАН»",
+                slogan: "Дәмді ас • Жақсы көңіл-күй",
+                loading: "Загрузка меню...",
+                table_label: "Столик",
+                service_label: "Обслуживание",
+                search_ph: "Поиск по меню (плов, стейк...)",
+                table_btn: "Стол",
+                your_order: "Ваш заказ",
+                waiter_btn: "Официант",
+                order_btn: "Заказ",
+                cart_title: "Корзина заказа",
+                subtotal_label: "Сумма блюд:",
+                service_fee_label: "Обслуживание (10%):",
+                total_label: "Итого к оплате:",
+                send_kitchen_btn: "Отправить на кухню & Чек",
+                select_table_title: "Выберите Ваш столик",
+                select_table_desc: "Укажите номер стола для доставки",
+                done_btn: "Готово",
+                city_name: "г. Астана",
+                receipt_subtotal: "Сумма:",
+                receipt_service: "Обслуживание 10%:",
+                receipt_total: "ИТОГО:",
+                sent_success: "Заказ передан на кухню",
+                close_btn: "Закрыть",
+                cart_empty: "Корзина пуста",
+                added_toast: "Добавлено:",
+                waiter_toast: "🛎 Официант вызван к столу №{table}!"
+            }
+        };
+
+        const menuData = [
+            { 
+                category_kk: "Таңғы астар", category_ru: "Завтраки", icon: "fa-sun", items: [
+                    { id: 101, name_kk: "Сұлы / күріш / манная ботқасы", name_ru: "Каша овсяная / рисовая / манная", price: 1350, desc_kk: "Сары май қосылған жұмсақ сүт ботқасы.", desc_ru: "Нежная молочная каша со сливочным маслом.", calories: "280 ккал" },
+                    { id: 102, name_kk: "Ірімшік қосылған қабырған омлет", name_ru: "Пышный омлет с сыром", price: 1350, desc_kk: "Фермер жұмыртқасынан жасалған ірімшікті омлет.", desc_ru: "Пышный омлет из фермерских яиц с сыром.", calories: "340 ккал" },
+                    { id: 108, name_kk: "«Байсан» таңғы асы", name_ru: "Завтрак «Байсан»", price: 2850, desc_kk: "Шеф-поваздан арнайы тойымды таңғы ас.", desc_ru: "Фирменный сытный завтрак от шеф-повара.", calories: "680 ккал", badge_kk: "Хит", badge_ru: "Хит" },
+                    { id: 109, name_kk: "Қазақы таңғы ас", name_ru: "Казахский завтрак", price: 2550, desc_kk: "Бауырсақ, қаймақ және үй ірімшігімен.", desc_ru: "С баурсаками, каймаком и домашним сыром.", calories: "720 ккал", badge_kk: "Хит", badge_ru: "Хит" }
+                ]
+            },
+            { 
+                category_kk: "Ыстық тіскебасарлар", category_ru: "Горячие закуски", icon: "fa-fire", items: [
+                    { id: 201, name_kk: "«Байсан» фирмалық бургері", name_ru: "Фирменный бургер «Байсан»", price: 2750, desc_kk: "Шырынды сиыр еті, фирмалық тұздық, чеддер, фри.", desc_ru: "Сочная говядина, фирменный соус, чеддер, фри.", calories: "780 ккал", badge_kk: "Хит", badge_ru: "Хит" },
+                    { id: 207, name_kk: "Аджар хачапуриі", name_ru: "Хачапури по-аджарски", price: 1950, desc_kk: "Ірімшігі мен сары майы бар қамыр қайығы.", desc_ru: "Лодочка из теста с сыром, маслом и желтком.", calories: "710 ккал", badge_kk: "Хит", badge_ru: "Хит" }
+                ]
+            },
+            { 
+                category_kk: "Салаттар", category_ru: "Салаты", icon: "fa-seedling", items: [
+                    { id: 408, name_kk: "Тауық еті қосылған Цезарь", name_ru: "Цезарь с курицей", price: 2350, desc_kk: "Тауық филесі, пармезан, сухари, цезарь тұздығы.", desc_ru: "Курочка, пармезан, сухарики, соус цезарь.", calories: "480 ккал" },
+                    { id: 411, name_kk: "«Байсан» фирмалық салаты", name_ru: "Фирменный салат «Байсан»", price: 2750, desc_kk: "Бұзау еті, жаңғақтар, шеф-поваздан эксклюзив.", desc_ru: "Телятина, орехи, эксклюзив от шефа.", calories: "510 ккал", badge_kk: "Хит", badge_ru: "Хит" }
+                ]
+            },
+            { 
+                category_kk: "Ыстық тағамдар", category_ru: "Горячие блюда", icon: "fa-utensils", items: [
+                    { id: 604, name_kk: "Тибон стейкі", name_ru: "Тибон стейк", price: 5850, desc_kk: "Сүйектегі премиум стейк.", desc_ru: "Премиальный стейк на кости.", calories: "880 ккал" },
+                    { id: 605, name_kk: "Рибай стейкі", name_ru: "Рибай стейк", price: 5850, desc_kk: "Классикалық мәрмәр стейк.", desc_ru: "Классический мраморный стейк.", calories: "920 ккал", badge_kk: "Премиум", badge_ru: "Премиум" }
+                ]
+            },
+            { 
+                category_kk: "Шығыс асханасы", category_ru: "Восточная кухня", icon: "fa-bowl-rice", items: [
+                    { id: 901, name_kk: "«Байсан» палауы", name_ru: "Плов «Байсан»", price: 2950, desc_kk: "Ет пен дәмдеуіштер қосылған фирмалық палау.", desc_ru: "Фирменный плов с мясом и специями.", calories: "820 ккал", badge_kk: "Хит", badge_ru: "Хит" },
+                    { id: 903, name_kk: "Екі адамдық сырне", name_ru: "Сырне на две персоны", price: 7250, desc_kk: "Қазанға картоппен бұқтырылған қой еті.", desc_ru: "Тушеная баранина с картофелем в казане.", calories: "1450 ккал", badge_kk: "Премиум", badge_ru: "Премиум" },
+                    { id: 907, name_kk: "Хандық бесбармақ", name_ru: "Бесбармак Ханский", price: 4750, desc_kk: "Қазы, жая және таңдаулы етпен.", desc_ru: "С казы, жалом и отборным мясом.", calories: "980 ккал", badge_kk: "Хит", badge_ru: "Хит" }
+                ]
+            }
+        ];
+
+        let currentCatIndex = 0;
+        let selectedTable = 4;
+        let cart = {};
+
+        document.addEventListener('DOMContentLoaded', () => { 
+            updateInterfaceText();
+            renderTabs(); 
+            renderMenu(); 
+            renderTables(); 
+        });
+
+        function toggleLanguage() {
+            currentLang = (currentLang === 'kk') ? 'ru' : 'kk';
+            document.getElementById('lang-btn-text').innerText = (currentLang === 'kk') ? 'РУС' : 'ҚАЗ';
+            document.documentElement.lang = currentLang;
+            
+            updateInterfaceText();
+            renderTabs();
+            renderMenu();
+            renderTables();
+            if(!document.getElementById('cart-modal').classList.contains('hidden')) {
+                openCartModal();
+            }
+        }
+
+        function updateInterfaceText() {
+            const t = translations[currentLang];
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                const key = el.getAttribute('data-lang');
+                if (t[key]) el.innerText = t[key];
+            });
+            document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-lang-placeholder');
+                if (t[key]) el.placeholder = t[key];
+            });
+        }
+
+        function renderTabs() {
+            document.getElementById('category-tabs').innerHTML = menuData.map((cat, idx) => {
+                const catName = (currentLang === 'kk') ? cat.category_kk : cat.category_ru;
+                return `
+                    <button onclick="selectCat(${idx})" class="whitespace-nowrap px-4 py-2 rounded-2xl text-xs font-bold transition flex items-center gap-2 ${idx === currentCatIndex ? 'bg-gold text-baisan-950 shadow-md font-extrabold' : 'bg-baisan-900/90 text-baisan-200 border border-gold/30'}">
+                        <i class="fa-solid ${cat.icon}"></i><span>${catName}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectCat(idx) { currentCatIndex = idx; renderTabs(); renderMenu(); }
+
+        function renderMenu() {
+            const cat = menuData[currentCatIndex];
+            const catName = (currentLang === 'kk') ? cat.category_kk : cat.category_ru;
+            const q = document.getElementById('search-input').value.toLowerCase().trim();
+            
+            let items = cat.items;
+            if (q) { 
+                items = []; 
+                menuData.forEach(c => c.items.forEach(i => { 
+                    const name = (currentLang === 'kk') ? i.name_kk : i.name_ru;
+                    if(name.toLowerCase().includes(q)) items.push(i); 
+                })); 
+            }
+
+            document.getElementById('menu-container').innerHTML = `
+                <div class="mb-5 flex justify-between items-center"><h2 class="font-serif text-2xl font-bold text-gold-light">${catName}</h2></div>
+                <div class="grid gap-3.5">${items.map(item => {
+                    const itemName = (currentLang === 'kk') ? item.name_kk : item.name_ru;
+                    const itemDesc = (currentLang === 'kk') ? item.desc_kk : item.desc_ru;
+                    const badge = item.badge_kk ? ((currentLang === 'kk') ? item.badge_kk : item.badge_ru) : null;
+
+                    return `
+                        <div class="bg-baisan-900/95 backdrop-blur-md rounded-2xl p-4 border border-gold/30 shadow-lg flex items-center justify-between gap-4 relative overflow-hidden text-white">
+                            ${badge ? `<span class="absolute top-0 right-0 bg-amber-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-bl-xl">${badge}</span>` : ''}
+                            <div class="flex-1 pr-2">
+                                <h3 class="font-bold text-white text-base">${itemName}</h3>
+                                <p class="text-xs text-baisan-300 mt-1">${itemDesc}</p>
+                                <div class="flex items-center gap-3 mt-2">
+                                    <span class="font-serif font-bold text-gold-light text-base">${item.price.toLocaleString()} ₸</span>
+                                    <span class="text-[11px] text-baisan-400"><i class="fa-solid fa-fire text-amber-500"></i> ${item.calories}</span>
+                                </div>
+                            </div>
+                            <button onclick="addToCart(${item.id})" class="w-10 h-10 rounded-2xl bg-gold/20 hover:bg-gold hover:text-baisan-950 text-gold border border-gold/40 flex items-center justify-center transition shadow-sm">
+                                <i class="fa-solid fa-plus font-bold"></i>
+                            </button>
+                        </div>`;
+                }).join('')}</div>
+            `;
+        }
+
+        document.getElementById('search-input').addEventListener('input', renderMenu);
+
+        function addToCart(id) {
+            let found = null;
+            menuData.forEach(c => c.items.forEach(i => { if(i.id === id) found = i; }));
+            if(!found) return;
+            cart[id] = cart[id] ? { ...cart[id], qty: cart[id].qty + 1 } : { item: found, qty: 1 };
+            updateCart();
+            const itemName = (currentLang === 'kk') ? found.name_kk : found.name_ru;
+            showToast(`${translations[currentLang].added_toast} ${itemName}`);
+        }
+
+        function updateCart() {
+            let total = 0, count = 0;
+            Object.values(cart).forEach(e => { count += e.qty; total += e.item.price * e.qty; });
+            document.getElementById('cart-badge-count').innerText = count;
+            document.getElementById('cart-total-price').innerText = total.toLocaleString() + ' ₸';
+            const fc = document.getElementById('floating-cart');
+            count > 0 ? fc.classList.remove('translate-y-full') : fc.classList.add('translate-y-full');
+        }
+
+        function openCartModal() {
+            const list = document.getElementById('cart-items-list');
+            const entries = Object.values(cart);
+            document.getElementById('modal-table-num').innerText = selectedTable;
+            
+            if(entries.length === 0) { 
+                list.innerHTML = `<p class="text-center text-xs text-baisan-300 py-6">${translations[currentLang].cart_empty}</p>`; 
+                return; 
+            }
+
+            list.innerHTML = entries.map(e => {
+                const itemName = (currentLang === 'kk') ? e.item.name_kk : e.item.name_ru;
+                return `
+                    <div class="flex justify-between items-center bg-baisan-950 p-3 rounded-xl border border-gold/30 text-sm">
+                        <div><h4 class="font-bold text-white">${itemName}</h4><p class="text-xs text-gold font-bold">${(e.item.price * e.qty).toLocaleString()} ₸</p></div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="changeQty(${e.item.id}, -1)" class="w-7 h-7 bg-baisan-900 border border-gold/30 rounded-lg font-bold text-gold">-</button>
+                            <span class="text-xs font-bold w-4 text-center text-white">${e.qty}</span>
+                            <button onclick="changeQty(${e.item.id}, 1)" class="w-7 h-7 bg-baisan-900 border border-gold/30 rounded-lg font-bold text-gold">+</button>
+                        </div>
+                    </div>`;
+            }).join('');
+
+            let sub = entries.reduce((s, e) => s + e.item.price * e.qty, 0);
+            let serv = Math.round(sub * 0.1);
+            document.getElementById('cart-subtotal').innerText = sub.toLocaleString() + ' ₸';
+            document.getElementById('cart-service').innerText = serv.toLocaleString() + ' ₸';
+            document.getElementById('cart-final-total').innerText = (sub + serv).toLocaleString() + ' ₸';
+            document.getElementById('cart-modal').classList.remove('hidden');
+            document.getElementById('cart-modal').classList.add('flex');
+        }
+
+        function closeCartModal() { document.getElementById('cart-modal').classList.add('hidden'); document.getElementById('cart-modal').classList.remove('flex'); }
+
+        function changeQty(id, delta) {
+            if(!cart[id]) return;
+            cart[id].qty += delta;
+            if(cart[id].qty <= 0) delete cart[id];
+            updateCart();
+            openCartModal();
+        }
+
+        function openTableSelector() { document.getElementById('table-modal').classList.remove('hidden'); document.getElementById('table-modal').classList.add('flex'); }
+        function closeTableSelector() { document.getElementById('table-modal').classList.add('hidden'); document.getElementById('table-modal').classList.remove('flex'); document.getElementById('current-table-label').innerText = '№ ' + selectedTable; }
+
+        function renderTables() {
+            let grid = document.getElementById('table-grid');
+            let html = '';
+            const tblLabel = translations[currentLang].table_label;
+            for(let i=1; i<=9; i++) {
+                html += `<button onclick="selectedTable=${i}; renderTables();" class="py-3 rounded-2xl font-bold border ${selectedTable === i ? 'bg-gold text-baisan-950 border-gold' : 'bg-baisan-950 text-baisan-200 border-gold/30'}">${tblLabel} №${i}</button>`;
+            }
+            grid.innerHTML = html;
+        }
+
+        function printThermalReceipt() {
+            closeCartModal();
+            let entries = Object.values(cart);
+            let sub = entries.reduce((s, e) => s + e.item.price * e.qty, 0);
+            let serv = Math.round(sub * 0.1);
+            let total = sub + serv;
+
+            document.getElementById('rcpt-tbl').innerText = selectedTable;
+            document.getElementById('receipt-date').innerText = new Date().toLocaleString();
+            document.getElementById('receipt-items-print').innerHTML = entries.map(e => {
+                const itemName = (currentLang === 'kk') ? e.item.name_kk : e.item.name_ru;
+                return `<div class="flex justify-between"><span>${e.qty}x ${itemName}</span><span>${(e.item.price * e.qty).toLocaleString()}₸</span></div>`;
+            }).join('');
+
+            document.getElementById('r-sub').innerText = sub.toLocaleString() + ' ₸';
+            document.getElementById('r-serv').innerText = serv.toLocaleString() + ' ₸';
+            document.getElementById('r-tot').innerText = total.toLocaleString() + ' ₸';
+
+            document.getElementById('receipt-modal').classList.remove('hidden');
+            document.getElementById('receipt-modal').classList.add('flex');
+            cart = {};
+            updateCart();
+        }
+
+        function closeReceiptModal() { document.getElementById('receipt-modal').classList.add('hidden'); document.getElementById('receipt-modal').classList.remove('flex'); }
+        
+        function callWaiter() { 
+            const msg = translations[currentLang].waiter_toast.replace('{table}', selectedTable);
+            showToast(msg); 
+        }
+
+        function showToast(text) {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-text').innerText = text;
+            t.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => t.classList.add('opacity-0', 'pointer-events-none'), 3000);
+        }
+    </script>
+</body>
+</html>

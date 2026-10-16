@@ -131,11 +131,8 @@
                     <p class="font-serif text-base sm:text-lg font-bold text-gold-light" id="cart-total-price">0 ₸</p>
                 </div>
             </div>
-            <div class="flex gap-2">
-                <button onclick="callWaiter()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2.5 rounded-xl text-xs font-semibold transition border border-white/10 flex items-center gap-1">
-                    <i class="fa-solid fa-bell text-gold"></i> <span data-lang="waiter_btn">Даяшы</span>
-                </button>
-                <button onclick="openCartModal()" class="bg-gradient-to-r from-amber-600 to-gold text-baisan-950 px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md active:scale-95 transition flex items-center gap-1.5">
+            <div>
+                <button onclick="openCartModal()" class="bg-gradient-to-r from-amber-600 to-gold text-baisan-950 px-6 sm:px-8 py-3 rounded-xl font-bold text-xs sm:text-sm shadow-md active:scale-95 transition flex items-center gap-2">
                     <span data-lang="order_btn">Тапсырыс</span> <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
@@ -208,7 +205,7 @@
     </div>
 
     <script>
-        let currentLang = 'kk'; // 'kk' немесе 'ru'
+        let currentLang = 'kk';
 
         const translations = {
             kk: {
@@ -219,10 +216,9 @@
                 loading: "Мәзір жүктелуде...",
                 table_label: "Үстел",
                 service_label: "Қызмет",
-                search_ph: "Мәзірден іздеу (палау, стейк...)",
+                search_ph: "Мәзірден іздеу...",
                 table_btn: "Үстел",
                 your_order: "Сіздің тапсырысыңыз",
-                waiter_btn: "Даяшы",
                 order_btn: "Тапсырыс",
                 cart_title: "Тапсырыс себеті",
                 subtotal_label: "Тағамдар сомасы:",
@@ -240,7 +236,8 @@
                 close_btn: "Жабу",
                 cart_empty: "Себет бос",
                 added_toast: "Қосылды:",
-                waiter_toast: "🛎 Үстел №{table} үшін даяшы шақырылды!"
+                search_title: "Іздеу нәтижелері",
+                no_results: "Тағамдар табылмады"
             },
             ru: {
                 title_cafe: "Кафе",
@@ -250,10 +247,9 @@
                 loading: "Загрузка меню...",
                 table_label: "Столик",
                 service_label: "Обслуживание",
-                search_ph: "Поиск по меню (плов, стейк...)",
+                search_ph: "Поиск по меню...",
                 table_btn: "Стол",
                 your_order: "Ваш заказ",
-                waiter_btn: "Официант",
                 order_btn: "Заказ",
                 cart_title: "Корзина заказа",
                 subtotal_label: "Сумма блюд:",
@@ -271,42 +267,43 @@
                 close_btn: "Закрыть",
                 cart_empty: "Корзина пуста",
                 added_toast: "Добавлено:",
-                waiter_toast: "🛎 Официант вызван к столу №{table}!"
+                search_title: "Результаты поиска",
+                no_results: "Блюда не найдены"
             }
         };
 
         const menuData = [
             { 
                 category_kk: "Таңғы астар", category_ru: "Завтраки", icon: "fa-sun", items: [
-                    { id: 101, name_kk: "Сұлы / күріш / манная ботқасы", name_ru: "Каша овсяная / рисовая / манная", price: 1350, desc_kk: "Сары май қосылған жұмсақ сүт ботқасы.", desc_ru: "Нежная молочная каша со сливочным маслом.", calories: "280 ккал" },
-                    { id: 102, name_kk: "Ірімшік қосылған қабырған омлет", name_ru: "Пышный омлет с сыром", price: 1350, desc_kk: "Фермер жұмыртқасынан жасалған ірімшікті омлет.", desc_ru: "Пышный омлет из фермерских яиц с сыром.", calories: "340 ккал" },
-                    { id: 108, name_kk: "«Байсан» таңғы асы", name_ru: "Завтрак «Байсан»", price: 2850, desc_kk: "Шеф-поваздан арнайы тойымды таңғы ас.", desc_ru: "Фирменный сытный завтрак от шеф-повара.", calories: "680 ккал", badge_kk: "Хит", badge_ru: "Хит" },
-                    { id: 109, name_kk: "Қазақы таңғы ас", name_ru: "Казахский завтрак", price: 2550, desc_kk: "Бауырсақ, қаймақ және үй ірімшігімен.", desc_ru: "С баурсаками, каймаком и домашним сыром.", calories: "720 ккал", badge_kk: "Хит", badge_ru: "Хит" }
+                    { id: 101, name_kk: "Сұлы / күріш / манная ботқасы", name_ru: "Каша овсяная / рисовая / манная", price: 1350, desc_kk: "Сары май қосылған жұмсақ сүт ботқасы.", desc_ru: "Нежная молочная каша со сливочным маслом." },
+                    { id: 102, name_kk: "Ірімшік қосылған қабырған омлет", name_ru: "Пышный омлет с сыром", price: 1350, desc_kk: "Фермер жұмыртқасынан жасалған ірімшікті омлет.", desc_ru: "Пышный омлет из фермерских яиц с сыром." },
+                    { id: 108, name_kk: "«Байсан» таңғы асы", name_ru: "Завтрак «Байсан»", price: 2850, desc_kk: "Шеф-поваздан арнайы тойымды таңғы ас.", desc_ru: "Фирменный сытный завтрак от шеф-повара.", badge_kk: "Хит", badge_ru: "Хит" },
+                    { id: 109, name_kk: "Қазақы таңғы ас", name_ru: "Казахский завтрак", price: 2550, desc_kk: "Бауырсақ, қаймақ және үй ірімшігімен.", desc_ru: "С баурсаками, каймаком и домашним сыром.", badge_kk: "Хит", badge_ru: "Хит" }
                 ]
             },
             { 
                 category_kk: "Ыстық тіскебасарлар", category_ru: "Горячие закуски", icon: "fa-fire", items: [
-                    { id: 201, name_kk: "«Байсан» фирмалық бургері", name_ru: "Фирменный бургер «Байсан»", price: 2750, desc_kk: "Шырынды сиыр еті, фирмалық тұздық, чеддер, фри.", desc_ru: "Сочная говядина, фирменный соус, чеддер, фри.", calories: "780 ккал", badge_kk: "Хит", badge_ru: "Хит" },
-                    { id: 207, name_kk: "Аджар хачапуриі", name_ru: "Хачапури по-аджарски", price: 1950, desc_kk: "Ірімшігі мен сары майы бар қамыр қайығы.", desc_ru: "Лодочка из теста с сыром, маслом и желтком.", calories: "710 ккал", badge_kk: "Хит", badge_ru: "Хит" }
+                    { id: 201, name_kk: "«Байсан» фирмалық бургері", name_ru: "Фирменный бургер «Байсан»", price: 2750, desc_kk: "Шырынды сиыр еті, фирмалық тұздық, чеддер, фри.", desc_ru: "Сочная говядина, фирменный соус, чеддер, фри.", badge_kk: "Хит", badge_ru: "Хит" },
+                    { id: 207, name_kk: "Аджар хачапуриі", name_ru: "Хачапури по-аджарски", price: 1950, desc_kk: "Ірімшігі мен сары майы бар қамыр қайығы.", desc_ru: "Лодочка из теста с сыром, маслом и желтком.", badge_kk: "Хит", badge_ru: "Хит" }
                 ]
             },
             { 
                 category_kk: "Салаттар", category_ru: "Салаты", icon: "fa-seedling", items: [
-                    { id: 408, name_kk: "Тауық еті қосылған Цезарь", name_ru: "Цезарь с курицей", price: 2350, desc_kk: "Тауық филесі, пармезан, сухари, цезарь тұздығы.", desc_ru: "Курочка, пармезан, сухарики, соус цезарь.", calories: "480 ккал" },
-                    { id: 411, name_kk: "«Байсан» фирмалық салаты", name_ru: "Фирменный салат «Байсан»", price: 2750, desc_kk: "Бұзау еті, жаңғақтар, шеф-поваздан эксклюзив.", desc_ru: "Телятина, орехи, эксклюзив от шефа.", calories: "510 ккал", badge_kk: "Хит", badge_ru: "Хит" }
+                    { id: 408, name_kk: "Тауық еті қосылған Цезарь", name_ru: "Цезарь с курицей", price: 2350, desc_kk: "Тауық филесі, пармезан, сухари, цезарь тұздығы.", desc_ru: "Курочка, пармезан, сухарики, соус цезарь." },
+                    { id: 411, name_kk: "«Байсан» фирмалық салаты", name_ru: "Фирменный салат «Байсан»", price: 2750, desc_kk: "Бұзау еті, жаңғақтар, шеф-поваздан эксклюзив.", desc_ru: "Телятина, орехи, эксклюзив от шефа.", badge_kk: "Хит", badge_ru: "Хит" }
                 ]
             },
             { 
                 category_kk: "Ыстық тағамдар", category_ru: "Горячие блюда", icon: "fa-utensils", items: [
-                    { id: 604, name_kk: "Тибон стейкі", name_ru: "Тибон стейк", price: 5850, desc_kk: "Сүйектегі премиум стейк.", desc_ru: "Премиальный стейк на кости.", calories: "880 ккал" },
-                    { id: 605, name_kk: "Рибай стейкі", name_ru: "Рибай стейк", price: 5850, desc_kk: "Классикалық мәрмәр стейк.", desc_ru: "Классический мраморный стейк.", calories: "920 ккал", badge_kk: "Премиум", badge_ru: "Премиум" }
+                    { id: 604, name_kk: "Тибон стейкі", name_ru: "Тибон стейк", price: 5850, desc_kk: "Сүйектегі премиум стейк.", desc_ru: "Премиальный стейк на кости." },
+                    { id: 605, name_kk: "Рибай стейкі", name_ru: "Рибай стейк", price: 5850, desc_kk: "Классикалық мәрмәр стейк.", desc_ru: "Классический мраморный стейк.", badge_kk: "Премиум", badge_ru: "Премиум" }
                 ]
             },
             { 
                 category_kk: "Шығыс асханасы", category_ru: "Восточная кухня", icon: "fa-bowl-rice", items: [
-                    { id: 901, name_kk: "«Байсан» палауы", name_ru: "Плов «Байсан»", price: 2950, desc_kk: "Ет пен дәмдеуіштер қосылған фирмалық палау.", desc_ru: "Фирменный плов с мясом и специями.", calories: "820 ккал", badge_kk: "Хит", badge_ru: "Хит" },
-                    { id: 903, name_kk: "Екі адамдық сырне", name_ru: "Сырне на две персоны", price: 7250, desc_kk: "Қазанға картоппен бұқтырылған қой еті.", desc_ru: "Тушеная баранина с картофелем в казане.", calories: "1450 ккал", badge_kk: "Премиум", badge_ru: "Премиум" },
-                    { id: 907, name_kk: "Хандық бесбармақ", name_ru: "Бесбармак Ханский", price: 4750, desc_kk: "Қазы, жая және таңдаулы етпен.", desc_ru: "С казы, жалом и отборным мясом.", calories: "980 ккал", badge_kk: "Хит", badge_ru: "Хит" }
+                    { id: 901, name_kk: "«Байсан» палауы", name_ru: "Плов «Байсан»", price: 2950, desc_kk: "Ет пен дәмдеуіштер қосылған фирмалық палау.", desc_ru: "Фирменный плов с мясом и специями.", badge_kk: "Хит", badge_ru: "Хит" },
+                    { id: 903, name_kk: "Екі адамдық сырне", name_ru: "Сырне на две персоны", price: 7250, desc_kk: "Қазанға картоппен бұқтырылған қой еті.", desc_ru: "Тушеная баранина с картофелем в казане.", badge_kk: "Премиум", badge_ru: "Премиум" },
+                    { id: 907, name_kk: "Хандық бесбармақ", name_ru: "Бесбармак Ханский", price: 4750, desc_kk: "Қазы, жая және таңдаулы етпен.", desc_ru: "С казы, жалом и отборным мясом.", badge_kk: "Хит", badge_ru: "Хит" }
                 ]
             }
         ];
@@ -359,58 +356,103 @@
             }).join('');
         }
 
-        function selectCat(idx) { currentCatIndex = idx; renderTabs(); renderMenu(); }
+        function selectCat(idx) { 
+            currentCatIndex = idx; 
+            document.getElementById('search-input').value = '';
+            renderTabs(); 
+            renderMenu(); 
+        }
 
         function renderMenu() {
-            const cat = menuData[currentCatIndex];
-            const catName = (currentLang === 'kk') ? cat.category_kk : cat.category_ru;
             const q = document.getElementById('search-input').value.toLowerCase().trim();
-            
-            let items = cat.items;
-            if (q) { 
-                items = []; 
-                menuData.forEach(c => c.items.forEach(i => { 
-                    const name = (currentLang === 'kk') ? i.name_kk : i.name_ru;
-                    if(name.toLowerCase().includes(q)) items.push(i); 
-                })); 
+            const container = document.getElementById('menu-container');
+            let html = '';
+
+            if (q) {
+                let foundItems = [];
+                menuData.forEach(c => {
+                    c.items.forEach(i => {
+                        const name = (currentLang === 'kk') ? i.name_kk : i.name_ru;
+                        if (name.toLowerCase().includes(q)) {
+                            foundItems.push(i);
+                        }
+                    });
+                });
+
+                const t = translations[currentLang];
+                html += `<div class="mb-5 flex justify-between items-center"><h2 class="font-serif text-2xl font-bold text-gold-light">${t.search_title} ("${q}")</h2></div>`;
+
+                if (foundItems.length === 0) {
+                    html += `<p class="text-center text-baisan-300 py-8 text-sm">${t.no_results}</p>`;
+                } else {
+                    html += `<div class="grid gap-3.5">${foundItems.map(item => renderItemCard(item)).join('')}</div>`;
+                }
+            } else {
+                const cat = menuData[currentCatIndex];
+                const catName = (currentLang === 'kk') ? cat.category_kk : cat.category_ru;
+                html += `<div class="mb-5 flex justify-between items-center"><h2 class="font-serif text-2xl font-bold text-gold-light">${catName}</h2></div>`;
+                html += `<div class="grid gap-3.5">${cat.items.map(item => renderItemCard(item)).join('')}</div>`;
             }
 
-            document.getElementById('menu-container').innerHTML = `
-                <div class="mb-5 flex justify-between items-center"><h2 class="font-serif text-2xl font-bold text-gold-light">${catName}</h2></div>
-                <div class="grid gap-3.5">${items.map(item => {
-                    const itemName = (currentLang === 'kk') ? item.name_kk : item.name_ru;
-                    const itemDesc = (currentLang === 'kk') ? item.desc_kk : item.desc_ru;
-                    const badge = item.badge_kk ? ((currentLang === 'kk') ? item.badge_kk : item.badge_ru) : null;
+            container.innerHTML = html;
+        }
 
-                    return `
-                        <div class="bg-baisan-900/95 backdrop-blur-md rounded-2xl p-4 border border-gold/30 shadow-lg flex items-center justify-between gap-4 relative overflow-hidden text-white">
-                            ${badge ? `<span class="absolute top-0 right-0 bg-amber-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-bl-xl">${badge}</span>` : ''}
-                            <div class="flex-1 pr-2">
-                                <h3 class="font-bold text-white text-base">${itemName}</h3>
-                                <p class="text-xs text-baisan-300 mt-1">${itemDesc}</p>
-                                <div class="flex items-center gap-3 mt-2">
-                                    <span class="font-serif font-bold text-gold-light text-base">${item.price.toLocaleString()} ₸</span>
-                                    <span class="text-[11px] text-baisan-400"><i class="fa-solid fa-fire text-amber-500"></i> ${item.calories}</span>
-                                </div>
+        function renderItemCard(item) {
+            const itemName = (currentLang === 'kk') ? item.name_kk : item.name_ru;
+            const itemDesc = (currentLang === 'kk') ? item.desc_kk : item.desc_ru;
+            const badge = item.badge_kk ? ((currentLang === 'kk') ? item.badge_kk : item.badge_ru) : null;
+            const qty = cart[item.id] ? cart[item.id].qty : 0;
+
+            return `
+                <div class="bg-baisan-900/95 backdrop-blur-md rounded-2xl p-4 border border-gold/30 shadow-lg flex items-center justify-between gap-4 relative overflow-hidden text-white">
+                    ${badge ? `<span class="absolute top-0 right-0 bg-amber-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-bl-xl">${badge}</span>` : ''}
+                    <div class="flex-1 pr-2">
+                        <h3 class="font-bold text-white text-base">${itemName}</h3>
+                        <p class="text-xs text-baisan-300 mt-1">${itemDesc}</p>
+                        <div class="flex items-center gap-3 mt-2">
+                            <span class="font-serif font-bold text-gold-light text-base">${item.price.toLocaleString()} ₸</span>
+                        </div>
+                    </div>
+                    <div>
+                        ${qty > 0 ? `
+                            <div class="flex items-center gap-2 bg-gold/20 border border-gold/40 rounded-2xl px-2 py-1">
+                                <button onclick="modifyCart(${item.id}, -1)" class="w-8 h-8 rounded-xl bg-baisan-900 text-gold flex items-center justify-center font-bold text-sm shadow">-</button>
+                                <span class="text-white font-bold text-sm w-5 text-center">${qty}</span>
+                                <button onclick="modifyCart(${item.id}, 1)" class="w-8 h-8 rounded-xl bg-gold text-baisan-950 flex items-center justify-center font-bold text-sm shadow">+</button>
                             </div>
-                            <button onclick="addToCart(${item.id})" class="w-10 h-10 rounded-2xl bg-gold/20 hover:bg-gold hover:text-baisan-950 text-gold border border-gold/40 flex items-center justify-center transition shadow-sm">
+                        ` : `
+                            <button onclick="modifyCart(${item.id}, 1)" class="w-10 h-10 rounded-2xl bg-gold/20 hover:bg-gold hover:text-baisan-950 text-gold border border-gold/40 flex items-center justify-center transition shadow-sm">
                                 <i class="fa-solid fa-plus font-bold"></i>
                             </button>
-                        </div>`;
-                }).join('')}</div>
-            `;
+                        `}
+                    </div>
+                </div>`;
         }
 
         document.getElementById('search-input').addEventListener('input', renderMenu);
 
-        function addToCart(id) {
+        function modifyCart(id, delta) {
             let found = null;
             menuData.forEach(c => c.items.forEach(i => { if(i.id === id) found = i; }));
             if(!found) return;
-            cart[id] = cart[id] ? { ...cart[id], qty: cart[id].qty + 1 } : { item: found, qty: 1 };
+
+            if(!cart[id]) {
+                if(delta > 0) {
+                    cart[id] = { item: found, qty: 1 };
+                    const itemName = (currentLang === 'kk') ? found.name_kk : found.name_ru;
+                    showToast(`${translations[currentLang].added_toast} ${itemName}`);
+                }
+            } else {
+                cart[id].qty += delta;
+                if(cart[id].qty <= 0) {
+                    delete cart[id];
+                }
+            }
             updateCart();
-            const itemName = (currentLang === 'kk') ? found.name_kk : found.name_ru;
-            showToast(`${translations[currentLang].added_toast} ${itemName}`);
+            renderMenu();
+            if(!document.getElementById('cart-modal').classList.contains('hidden')) {
+                openCartModal();
+            }
         }
 
         function updateCart() {
@@ -438,9 +480,9 @@
                     <div class="flex justify-between items-center bg-baisan-950 p-3 rounded-xl border border-gold/30 text-sm">
                         <div><h4 class="font-bold text-white">${itemName}</h4><p class="text-xs text-gold font-bold">${(e.item.price * e.qty).toLocaleString()} ₸</p></div>
                         <div class="flex items-center gap-2">
-                            <button onclick="changeQty(${e.item.id}, -1)" class="w-7 h-7 bg-baisan-900 border border-gold/30 rounded-lg font-bold text-gold">-</button>
+                            <button onclick="modifyCart(${e.item.id}, -1)" class="w-7 h-7 bg-baisan-900 border border-gold/30 rounded-lg font-bold text-gold">-</button>
                             <span class="text-xs font-bold w-4 text-center text-white">${e.qty}</span>
-                            <button onclick="changeQty(${e.item.id}, 1)" class="w-7 h-7 bg-baisan-900 border border-gold/30 rounded-lg font-bold text-gold">+</button>
+                            <button onclick="modifyCart(${e.item.id}, 1)" class="w-7 h-7 bg-baisan-900 border border-gold/30 rounded-lg font-bold text-gold">+</button>
                         </div>
                     </div>`;
             }).join('');
@@ -455,14 +497,6 @@
         }
 
         function closeCartModal() { document.getElementById('cart-modal').classList.add('hidden'); document.getElementById('cart-modal').classList.remove('flex'); }
-
-        function changeQty(id, delta) {
-            if(!cart[id]) return;
-            cart[id].qty += delta;
-            if(cart[id].qty <= 0) delete cart[id];
-            updateCart();
-            openCartModal();
-        }
 
         function openTableSelector() { document.getElementById('table-modal').classList.remove('hidden'); document.getElementById('table-modal').classList.add('flex'); }
         function closeTableSelector() { document.getElementById('table-modal').classList.add('hidden'); document.getElementById('table-modal').classList.remove('flex'); document.getElementById('current-table-label').innerText = '№ ' + selectedTable; }
@@ -499,14 +533,10 @@
             document.getElementById('receipt-modal').classList.add('flex');
             cart = {};
             updateCart();
+            renderMenu();
         }
 
         function closeReceiptModal() { document.getElementById('receipt-modal').classList.add('hidden'); document.getElementById('receipt-modal').classList.remove('flex'); }
-        
-        function callWaiter() { 
-            const msg = translations[currentLang].waiter_toast.replace('{table}', selectedTable);
-            showToast(msg); 
-        }
 
         function showToast(text) {
             const t = document.getElementById('toast');
